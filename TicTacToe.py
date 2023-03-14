@@ -14,18 +14,20 @@ class Game:
 
         while True:
             move = self.current_player.get_move()
-            self.board.make_move(move, self.current_player.symbol)
-            os.system('cls')
-            self.board.display()
+            if self.board.make_move(move, self.current_player.symbol):
+                os.system('cls')
+                self.board.display()
 
-            if self.board.check_win(self.current_player.symbol):
-                print(f'{self.current_player.name} wins!')
-                break
-            elif self.board.check_tie():
-                print('It\'s a tie!')
-                break
+                if self.board.check_win(self.current_player.symbol):
+                    print(f'{self.current_player.name} wins!')
+                    break
+                elif self.board.check_tie():
+                    print('It\'s a tie!')
+                    break
 
-            self.current_player = self.players[(self.players.index(self.current_player) + 1) % len(self.players)]
+                self.current_player = self.players[(self.players.index(self.current_player) + 1) % len(self.players)]
+            else:
+                print('That cell is already occupied. Please try again.')
 
     def end(self):
         print('Thanks for playing!')
@@ -40,7 +42,7 @@ class Player:
             try:
                 move = int(input(f'{self.name}, enter your move (1-9): '))
                 if 1 <= move <= 9:
-                    return move
+                        return move
             except ValueError:
                 pass
 
@@ -58,7 +60,11 @@ class Board:
         ''')
 
     def make_move(self, move, symbol):
-        self.cells[move-1] = symbol
+        if self.cells[move-1] == ' ':
+            self.cells[move-1] = symbol
+            return True
+        else:
+            return False
 
     def check_win(self, symbol):
         win_conditions = [
